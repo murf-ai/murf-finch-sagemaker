@@ -41,7 +41,7 @@ Options go in the `X-Amzn-SageMaker-Custom-Attributes` header as comma-separated
 | Option | Required | Description |
 |---|---|---|
 | `language_code` | no | Language of the audio, e.g. `en`, `de`, `hi`. Detected automatically when omitted. |
-| `timestamps_granularity` | no | `word` (default) returns word start and end times; `none` omits them. |
+| `timestamps_granularity` | no | `word` (default) returns word start and end times in Finch Indic; `none` omits them. Finch Global does not return word timestamps yet. |
 | `keyterms` | no | Words or phrases to recognize more reliably, separated by `\|`, e.g. `Murf\|Finch`. |
 
 A real-time request is limited to 6 MB and 60 seconds by SageMaker; use batch
@@ -51,16 +51,16 @@ transform for longer files (up to one hour each).
 
 ```json
 {
-  "transcription_id": "6f1c2b9e",
+  "transcription_id": "449addcb-6778-4abe-85c5-785d7889844b",
   "language_code": "en",
-  "language_probability": 0.99,
-  "text": "He did not set a figure for the cuts, saying they will be made based on China's economic output.",
-  "words": [{"text": "He", "start": 0.12, "end": 0.24, "type": "word"}],
+  "language_probability": 1.0,
+  "text": "he did not set a figure for the cuts saying they would be made based on china's economic output",
+  "words": [],
   "audio_duration_secs": 6.36
 }
 ```
 
-`words` is empty when `timestamps_granularity` is `none`.
+In Finch Indic, `words` lists each word with `start` and `end` in seconds. It is empty in Finch Global, or when `timestamps_granularity` is `none`.
 
 ## Streaming
 
