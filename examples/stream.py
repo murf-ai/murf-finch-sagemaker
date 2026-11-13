@@ -16,6 +16,7 @@ import wave
 
 import boto3
 from aws_sdk_sagemaker_runtime_http2.client import AsyncSageMakerRuntimeHTTP2Client
+from aws_sdk_sagemaker_runtime_http2.config import AsyncSageMakerRuntimeHTTP2Config as Config
 from aws_sdk_sagemaker_runtime_http2.models import (
     InvokeEndpointWithBidirectionalStreamInput,
     RequestPayloadPart,
@@ -27,21 +28,19 @@ from smithy_http.aio.crt import AWSCRTHTTPClient
 CHUNK_S = 0.1
 
 
-def client(region: str) -> AsyncSageMakerRuntimeHTTP2Client:
+async def client(region: str) -> AsyncSageMakerRuntimeHTTP2Client:
     session = boto3.Session(region_name=region)
     creds = session.get_credentials().get_frozen_credentials()
     os.environ.update(AWS_ACCESS_KEY_ID=creds.access_key, AWS_SECRET_ACCESS_KEY=creds.secret_key, AWS_REGION=region)
     if creds.token:
         os.environ["AWS_SESSION_TOKEN"] = creds.token
     url = session.client("sagemaker-runtime").meta.endpoint_url
-
-    def plugin(cfg):
-        cfg.endpoint_uri = f"{url}:8443"
-        cfg.region = region
-        cfg.aws_credentials_identity_resolver = EnvironmentCredentialsResolver()
-        cfg.transport = AWSCRTHTTPClient()
-
-    return AsyncSageMakerRuntimeHTTP2Client(plugins=[plugin])
+    return AsyncSageMakerRuntimeHTTP2Client(await Config.resolve(
+        endpoint_uri=f"{url}:8443",
+        region=region,
+        aws_credentials_identity_resolver=EnvironmentCredentialsResolver(),
+        transport=AWSCRTHTTPClient(),
+    ))
 
 
 async def main() -> None:
@@ -60,7 +59,7 @@ async def main() -> None:
 
     query = "&".join(([f"language={args.language}"] if args.language else []) + (["bvc=true"] if args.bvc else []))
     extra = {"model_query_string": query} if query else {}
-    stream = await client(args.region).invoke_endpoint_with_bidirectional_stream(
+    stream = await (await client(args.region)).invoke_endpoint_with_bidirectional_stream(
         InvokeEndpointWithBidirectionalStreamInput(endpoint_name=args.endpoint, **extra))
     output = (await stream.await_output())[1]
 

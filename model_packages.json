@@ -1,0 +1,14 @@
+{
+  "global": {
+    "version": "1.0.1",
+    "arns": {
+      "us-east-2": "arn:aws:sagemaker:us-east-2:057799348421:model-package/murf-finch-stt-global-1-0-1-cf1303542db23dd8be92e8fed80e4762"
+    }
+  },
+  "indic": {
+    "version": "1.0.1",
+    "arns": {
+      "us-east-2": "arn:aws:sagemaker:us-east-2:057799348421:model-package/murf-finch-stt-indic-1-0-1-16b758974ab13df98271f64e2c7822cb"
+    }
+  }
+}

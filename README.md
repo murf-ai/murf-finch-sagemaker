@@ -47,6 +47,8 @@ runs every step below, including streaming and batch, with the sample audio in t
    Indic) and your AWS Region, and copy the **model package ARN**. It is different
    in every Region. You can find it again later under
    **AWS Marketplace > Manage subscriptions > Murf Finch > Launch new configuration**.
+   [model_packages.json](model_packages.json) lists the latest version's ARNs; the
+   notebook reads it, so it always deploys the latest version unless you pin an ARN.
 
 ### 2. Create an execution role (once per account)
 
