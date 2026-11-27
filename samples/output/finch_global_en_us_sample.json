@@ -1,8 +1,123 @@
 {
-  "transcription_id": "88167718-7e7a-4529-992c-2aee87b56a04",
+  "transcription_id": "fbae4826-8353-441c-a601-87a8c1041a92",
   "language_code": "en",
   "language_probability": 1.0,
-  "text": "he did not set a figure for the cuts saying they would be made based on china's economic output",
-  "words": [],
+  "text": "he did not set a figure for the cuts, saying they will be made based on china's economic output.",
+  "words": [
+    {
+      "text": "he",
+      "start": 0.532,
+      "end": 0.972,
+      "type": "word"
+    },
+    {
+      "text": "did",
+      "start": 0.972,
+      "end": 1.1320000000000001,
+      "type": "word"
+    },
+    {
+      "text": "not",
+      "start": 1.1320000000000001,
+      "end": 1.312,
+      "type": "word"
+    },
+    {
+      "text": "set",
+      "start": 1.312,
+      "end": 1.452,
+      "type": "word"
+    },
+    {
+      "text": "a",
+      "start": 1.452,
+      "end": 1.612,
+      "type": "word"
+    },
+    {
+      "text": "figure",
+      "start": 1.612,
+      "end": 1.8820000000000003,
+      "type": "word"
+    },
+    {
+      "text": "for",
+      "start": 1.8820000000000003,
+      "end": 2.0420000000000003,
+      "type": "word"
+    },
+    {
+      "text": "the",
+      "start": 2.0420000000000003,
+      "end": 2.262,
+      "type": "word"
+    },
+    {
+      "text": "cuts",
+      "start": 2.262,
+      "end": 2.472,
+      "type": "word"
+    },
+    {
+      "text": "saying",
+      "start": 2.472,
+      "end": 2.7119999999999997,
+      "type": "word"
+    },
+    {
+      "text": "they",
+      "start": 2.7119999999999997,
+      "end": 2.872,
+      "type": "word"
+    },
+    {
+      "text": "will",
+      "start": 2.872,
+      "end": 2.972,
+      "type": "word"
+    },
+    {
+      "text": "be",
+      "start": 2.972,
+      "end": 3.132,
+      "type": "word"
+    },
+    {
+      "text": "made",
+      "start": 3.132,
+      "end": 3.372,
+      "type": "word"
+    },
+    {
+      "text": "based",
+      "start": 3.372,
+      "end": 3.652,
+      "type": "word"
+    },
+    {
+      "text": "on",
+      "start": 3.652,
+      "end": 3.8320000000000003,
+      "type": "word"
+    },
+    {
+      "text": "china's",
+      "start": 3.8320000000000003,
+      "end": 4.3919999999999995,
+      "type": "word"
+    },
+    {
+      "text": "economic",
+      "start": 4.3919999999999995,
+      "end": 5.172,
+      "type": "word"
+    },
+    {
+      "text": "output",
+      "start": 5.172,
+      "end": 5.644,
+      "type": "word"
+    }
+  ],
   "audio_duration_secs": 6.36
 }

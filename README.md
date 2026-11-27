@@ -6,12 +6,14 @@ isolation: audio and transcripts never leave your account, and nothing is sent t
 
 The AWS Marketplace listing has two versions. Pick the one that matches your audio:
 
-| Version | Languages | Word timestamps |
-|---|---|---|
-| Finch Global | English, German, Spanish, French, Italian, Portuguese, Dutch | Not yet |
-| Finch Indic | Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, English (India) | Yes |
+| Version | Languages |
+|---|---|
+| Finch Global | English, German, Spanish, French, Italian, Portuguese, Dutch |
+| Finch Indic | Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, English (India) |
 
-Language is detected automatically, or you can set it per request.
+Both return word timestamps (Finch Global from version 1.0.3). Language is detected
+automatically, or you can set it per request. From version 1.0.3, Finch Indic can also
+write its output in Latin script (see [`mode`](#transcribe-files-real-time)).
 
 **Contents:** [Get started in 15 minutes](#get-started-in-15-minutes) ·
 [Choose an instance](#choose-an-instance) · [Transcribe files](#transcribe-files-real-time) ·
@@ -91,22 +93,22 @@ aws sagemaker-runtime invoke-endpoint --endpoint-name $NAME \
 ```
 
 ```json
-{"transcription_id": "449addcb-...", "language_code": "en", "language_probability": 1.0,
- "text": "he did not set a figure for the cuts saying they would be made based on china's economic output",
- "words": [], "audio_duration_secs": 6.36}
+{"transcription_id": "fbae4826-...", "language_code": "en", "language_probability": 1.0,
+ "text": "he did not set a figure for the cuts, saying they will be made based on china's economic output.",
+ "words": [{"text": "he", "start": 0.532, "end": 0.972, "type": "word"}, ...], "audio_duration_secs": 6.36}
 ```
 
 ### 5. Stream live audio
 
 ```bash
-pip install "aws-sdk-sagemaker-runtime-http2[awscrt]>=0.11" boto3     # Python 3.12+
+pip install "aws-sdk-sagemaker-runtime-http2[awscrt]>=0.11,<0.12" boto3     # Python 3.12+
 python examples/stream.py --endpoint $NAME --region $AWS_REGION samples/en_us_sample.wav
-# options: --language de, --bvc (suppress background voices), --raw (print every message)
+# options: --language de, --mode romanized (Finch Indic), --bvc (suppress background voices),
+#          --raw (print every message)
 ```
 
 ```
-partial: he did not set a figure for the cuts saying they will be made based on china's economic output
-final:   he did not set a figure for the cuts saying they will be made based on china's economic output
+final:   he did not set a figure for the cuts, saying they will be made based on china's economic output.
 ```
 
 ### 6. Clean up
@@ -135,13 +137,13 @@ end of speech.
 | ml.g6.2xlarge | NVIDIA L4 | 64 | 204 ms | |
 | ml.g5.xlarge | NVIDIA A10G | 64 | 143 ms | |
 | ml.g6e.xlarge | NVIDIA L40S | 96 | 90 ms | Lowest latency |
+| ml.g7e.2xlarge | NVIDIA Blackwell | not yet measured | | Version 1.0.2 or later |
 
 Streams are for Finch Global. Finch Indic stayed under 165 ms (p90) at 64 streams on
 every instance above; our Hindi test set did not allow higher loads. With a single
 stream, final transcripts arrive in 45-85 ms (p90) on all of them.
 
-Other instance types are not supported in this version: ml.g4dn (NVIDIA T4) is too slow
-for live use, and ml.g7e (NVIDIA Blackwell) does not start.
+Other instance types are not supported: ml.g4dn (NVIDIA T4) is too slow for live use.
 
 **Sizing:** instances = peak concurrent streams / streams per instance, rounded up,
 plus one for redundancy. Add
@@ -178,7 +180,8 @@ example `language_code=de,timestamps_granularity=none`.
 | Option | Required | Description |
 |---|---|---|
 | `language_code` | no | Language of the audio, e.g. `en`, `de`, `hi`. Detected automatically when omitted. |
-| `timestamps_granularity` | no | `word` (default) returns word start and end times in Finch Indic; `none` omits them. |
+| `mode` | no | Finch Indic output script. Omitted: Hindi is code-mixed, with English words in Latin (`नहीं but वो safely बच गए`). `native`: Hindi all in Devanagari (`नहीं बट वो सेफली बच गए`). `romanized`: every Indian-language word in casual Latin spelling, in `text` and `words` (`nahi but wo safely bach gaye`). |
+| `timestamps_granularity` | no | `word` (default) returns word start and end times; `none` omits them. |
 | `keyterms` | no | Words or phrases to recognize more reliably, separated by `\|`, e.g. `Murf\|Finch`. |
 
 ```python
@@ -194,10 +197,10 @@ print(json.loads(r["Body"].read())["text"])
 
 | Field | Always | Description |
 |---|---|---|
-| `text` | yes | The transcript. Finch Global returns lowercase text without punctuation. |
+| `text` | yes | The transcript. Finch Global returns lowercase text; Hindi is returned without punctuation. |
 | `language_code` | yes | Detected or requested language. |
 | `language_probability` | yes | Confidence of the language detection, 0 to 1. |
-| `words` | yes | Finch Indic: each word with `start` and `end` in seconds. Empty in Finch Global or with `timestamps_granularity=none`. |
+| `words` | yes | Each word with `start` and `end` in seconds. Empty with `timestamps_granularity=none`. |
 | `audio_duration_secs` | yes | Length of the audio; this is the billed duration. |
 | `transcription_id` | yes | Unique ID; include it in support requests. |
 
@@ -214,6 +217,7 @@ Options go in `ModelQueryString`, for example `language=hi&keywords=Murf,Finch`:
 | Option | Description |
 |---|---|
 | `language` | One language (`en`, `hi`, `de`, ...), or a comma-separated set to detect from. Detected automatically when omitted. |
+| `mode` | Finch Indic output script, `native` or `romanized`, as for [files](#transcribe-files-real-time). |
 | `keywords` | Comma-separated words or phrases to recognize more reliably. |
 | `commit_mode` | `vad` (default): a turn ends after a short silence. `manual`: a turn ends only when you send `Finalize`. |
 | `vad_silence_threshold_secs` | Silence that ends a turn in `vad` mode. Default 0.55, range 0.192 to 3.0. Raise it for slow speakers, lower it for snappier agents. |
@@ -238,16 +242,17 @@ Options go in `ModelQueryString`, for example `language=hi&keywords=Murf,Finch`:
 ```json
 {"type": "SessionStarted", "session_id": "20261112T103817Z_05a4...", "language": null}
 {"type": "partial", "transcript": "he did not set a figure", "rawEvent": {"event": "Update", "turn_index": 0, ...}}
-{"type": "final", "transcript": "he did not set a figure for the cuts saying they will be made based on china's economic output",
- "rawEvent": {"event": "EndOfTurn", "turn_index": 0, "audio_window_start": 0.916, "audio_window_end": 5.26,
-              "language": "en", "language_confidence": 1.0, "words": []}}
+{"type": "final", "transcript": "he did not set a figure for the cuts, saying they will be made based on china's economic output.",
+ "rawEvent": {"event": "EndOfTurn", "turn_index": 0, "audio_window_start": 0.532, "audio_window_end": 5.26,
+              "language": "en", "language_confidence": 1.0,
+              "words": [{"word": "he", "start": 0.532, "end": 0.972, ...}, ...]}}
 ```
 
 - `partial` messages update the current turn as the speaker talks; show them as live captions.
 - One `final` per turn carries the settled text; send it to your LLM or agent.
   A `final` with an empty transcript means the turn contained no speech.
 - `rawEvent` adds timing (`audio_window_start`/`end`, seconds from stream start),
-  the detected language, and, in Finch Indic, word timestamps.
+  the detected language, and word timestamps.
 - Errors arrive as `{"type": "Error", "message": "..."}`.
 
 A stream closes after 10 seconds without a first message, or after 180 seconds
@@ -301,11 +306,12 @@ ml.g5.2xlarge: 66 ms at 1 stream, 106 ms at 32, 150 ms at 64, 222 ms at 96. See
 |---|---|
 | `ResourceLimitExceeded` when creating the endpoint | No GPU quota for that type. Request an increase, or use another supported type. |
 | Endpoint `Failed` with `InsufficientInstanceCapacity` | AWS has no free GPUs of that type in the Region right now. Retry, use an [instance pool](#choose-an-instance), or another Region. |
-| Endpoint `Failed` health check | Use `ContainerStartupHealthCheckTimeoutInSeconds` of 900 and a supported instance type (ml.g4dn and ml.g7e are not). |
+| Endpoint `Failed` health check | Use `ContainerStartupHealthCheckTimeoutInSeconds` of 900 and a supported instance type (not ml.g4dn; ml.g7e needs version 1.0.2+). |
 | `ValidationError` mentioning network isolation | Create the model with `--enable-network-isolation`. |
 | HTTP 413 on `InvokeEndpoint` | File over 25 MB. Compress it (MP3/Opus), split it, or use batch transform. |
 | `ModelError` with a 400 status | The audio could not be decoded, or `language_code` is not in this version. The message says which. |
 | Stream fails with `UnsupportedTransportError` (Python) | Use `smithy_http.aio.crt.AWSCRTHTTPClient` as the transport, as in `examples/stream.py`. |
+| `ImportError: cannot import name 'AsyncSageMakerRuntimeHTTP2Client'` | `aws-sdk-sagemaker-runtime-http2` 0.12 and later renamed the client. Install `"aws-sdk-sagemaker-runtime-http2[awscrt]>=0.11,<0.12"`. |
 | Stream returns nothing | Audio format does not match `AudioConfig` (default is 16 kHz 16-bit mono PCM), or audio is all silence. |
 | Transcript in the wrong language | Set `language_code` / `language` explicitly. Finch Global does not transcribe Indian languages; use Finch Indic. |
 

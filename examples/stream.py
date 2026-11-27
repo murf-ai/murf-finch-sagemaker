@@ -1,6 +1,6 @@
 """Stream a WAV file to a Murf Finch SageMaker endpoint and print transcripts as they arrive.
 
-    pip install "aws-sdk-sagemaker-runtime-http2[awscrt]>=0.11" boto3   # Python 3.12+
+    pip install "aws-sdk-sagemaker-runtime-http2[awscrt]>=0.11,<0.12" boto3   # Python 3.12+
     python examples/stream.py --endpoint my-finch-endpoint --region us-east-1 samples/en_us_sample.wav
 
 The audio is sent in 100 ms chunks at real-time pace, as a microphone or phone line would.
@@ -49,6 +49,8 @@ async def main() -> None:
     ap.add_argument("--endpoint", required=True)
     ap.add_argument("--region", default=os.environ.get("AWS_REGION", "us-east-1"))
     ap.add_argument("--language", help="e.g. en, de, hi; detected automatically when omitted")
+    ap.add_argument("--mode", choices=("native", "romanized"),
+                    help="Finch Indic output script: native = all Devanagari Hindi, romanized = Latin")
     ap.add_argument("--bvc", action="store_true", help="suppress background voices (TV, nearby speakers)")
     ap.add_argument("--raw", action="store_true", help="print every message as received")
     args = ap.parse_args()
@@ -57,7 +59,9 @@ async def main() -> None:
         assert w.getsampwidth() == 2 and w.getnchannels() == 1, "need 16-bit mono PCM WAV"
         rate, pcm = w.getframerate(), w.readframes(w.getnframes())
 
-    query = "&".join(([f"language={args.language}"] if args.language else []) + (["bvc=true"] if args.bvc else []))
+    query = "&".join(([f"language={args.language}"] if args.language else [])
+                     + ([f"mode={args.mode}"] if args.mode else [])
+                     + (["bvc=true"] if args.bvc else []))
     extra = {"model_query_string": query} if query else {}
     stream = await (await client(args.region)).invoke_endpoint_with_bidirectional_stream(
         InvokeEndpointWithBidirectionalStreamInput(endpoint_name=args.endpoint, **extra))

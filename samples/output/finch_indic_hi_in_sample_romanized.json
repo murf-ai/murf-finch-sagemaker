@@ -1,0 +1,147 @@
+{
+  "transcription_id": "5334f5af-d5e2-4ccc-a394-a6e8ad695410",
+  "language_code": "hi",
+  "language_probability": 1.0,
+  "text": "yah kehte hue ki ve china ke aarthik utpadan ke aadhar par banaye jayenge unhone katauti ke liye koi aankda nirdharit nahi kiya",
+  "words": [
+    {
+      "text": "yah",
+      "start": 0.788,
+      "end": 1.428,
+      "type": "word"
+    },
+    {
+      "text": "kehte",
+      "start": 1.428,
+      "end": 1.788,
+      "type": "word"
+    },
+    {
+      "text": "hue",
+      "start": 1.788,
+      "end": 2.008,
+      "type": "word"
+    },
+    {
+      "text": "ki",
+      "start": 2.008,
+      "end": 2.168,
+      "type": "word"
+    },
+    {
+      "text": "ve",
+      "start": 2.168,
+      "end": 2.3680000000000003,
+      "type": "word"
+    },
+    {
+      "text": "china",
+      "start": 2.3680000000000003,
+      "end": 2.588,
+      "type": "word"
+    },
+    {
+      "text": "ke",
+      "start": 2.588,
+      "end": 2.748,
+      "type": "word"
+    },
+    {
+      "text": "aarthik",
+      "start": 2.748,
+      "end": 3.088,
+      "type": "word"
+    },
+    {
+      "text": "utpadan",
+      "start": 3.088,
+      "end": 3.428,
+      "type": "word"
+    },
+    {
+      "text": "ke",
+      "start": 3.428,
+      "end": 3.588,
+      "type": "word"
+    },
+    {
+      "text": "aadhar",
+      "start": 3.588,
+      "end": 3.8280000000000003,
+      "type": "word"
+    },
+    {
+      "text": "par",
+      "start": 3.8280000000000003,
+      "end": 3.9880000000000004,
+      "type": "word"
+    },
+    {
+      "text": "banaye",
+      "start": 3.9880000000000004,
+      "end": 4.308,
+      "type": "word"
+    },
+    {
+      "text": "jayenge",
+      "start": 4.308,
+      "end": 5.168,
+      "type": "word"
+    },
+    {
+      "text": "unhone",
+      "start": 5.168,
+      "end": 5.508,
+      "type": "word"
+    },
+    {
+      "text": "katauti",
+      "start": 5.508,
+      "end": 5.788,
+      "type": "word"
+    },
+    {
+      "text": "ke",
+      "start": 5.788,
+      "end": 5.948,
+      "type": "word"
+    },
+    {
+      "text": "liye",
+      "start": 5.948,
+      "end": 6.128,
+      "type": "word"
+    },
+    {
+      "text": "koi",
+      "start": 6.128,
+      "end": 6.308000000000001,
+      "type": "word"
+    },
+    {
+      "text": "aankda",
+      "start": 6.308000000000001,
+      "end": 6.648000000000001,
+      "type": "word"
+    },
+    {
+      "text": "nirdharit",
+      "start": 6.648000000000001,
+      "end": 7.148000000000001,
+      "type": "word"
+    },
+    {
+      "text": "nahi",
+      "start": 7.148000000000001,
+      "end": 7.368,
+      "type": "word"
+    },
+    {
+      "text": "kiya",
+      "start": 7.368,
+      "end": 7.948,
+      "type": "word"
+    }
+  ],
+  "audio_duration_secs": 8.4
+}
